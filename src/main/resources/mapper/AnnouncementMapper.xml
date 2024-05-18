@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huang.oa.mapper.AnnouncementMapper">
+
+    <insert id="insertAll">
+        insert into department_announcements (department_id, title, content, publish_date)
+        values (#{departmentId},#{title},#{content},#{publishDate})
+    </insert>
+
+</mapper>

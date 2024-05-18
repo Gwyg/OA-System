@@ -1,6 +1,7 @@
 package com.huang.oa.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.huang.oa.common.ErrorMessage;
 import com.huang.oa.exception.PasswordErrorException;
 import com.huang.oa.exception.UsernameErrorException;
 import com.huang.oa.exception.UsernameExistsException;
@@ -23,8 +24,7 @@ public class LoginServiceImpl implements LoginService {
     public Integer register(RegisterDTO registerDTO) {
         User user = userMapper.getByUsername(registerDTO.getUsername());
         if (user != null) {
-            // TODO
-            throw new UsernameExistsException("用户名已存在");
+            throw new UsernameExistsException(ErrorMessage.USER_NAME_ALREADY_EXISTS);
         }
         String password = DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes());
         registerDTO.setPassword(password);
@@ -35,13 +35,12 @@ public class LoginServiceImpl implements LoginService {
     public void login(LoginDTO loginDTO) {
         User user = userMapper.getByUsername(loginDTO.getUsername());
         if(user == null) {
-            // TODO 把信息单独提出来
-            throw new UsernameErrorException("用户名不存在");
+
+            throw new UsernameErrorException(ErrorMessage.USER_NOT_REGISTERED);
         }
         String password = DigestUtils.md5DigestAsHex(loginDTO.getPassword().getBytes());
         if (!password.equals(user.getPassword())) {
-            // TODO
-            throw new PasswordErrorException("密码错误");
+            throw new PasswordErrorException(ErrorMessage.WRONG_PASSWORD);
         }
         StpUtil.login(user.getUserId());
     }

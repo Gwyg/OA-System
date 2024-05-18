@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huang.oa.mapper.DepartmentsMapper">
+
+    <select id="getManagerIdByGroupId" resultType="java.lang.Integer">
+        select manager_id from departments where department_id = (select work_groups.department_id from work_groups where group_id = #{groupId})
+    </select>
+</mapper>
+
+

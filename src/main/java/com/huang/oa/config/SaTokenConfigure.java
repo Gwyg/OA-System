@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-//@Configuration
+@Configuration
 public class SaTokenConfigure implements WebMvcConfigurer {
     // 注册拦截器
     @Override
@@ -26,5 +26,8 @@ public class SaTokenConfigure implements WebMvcConfigurer {
                         "/v3/api-docs/**",
                         // 我的习惯, 方便调试, 你可以不用
                         "/error");
+
     }
+
+
 }

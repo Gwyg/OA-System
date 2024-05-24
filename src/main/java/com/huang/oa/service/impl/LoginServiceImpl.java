@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.util.UUID;
+
 @Service
 public class LoginServiceImpl implements LoginService {
 
@@ -26,7 +28,10 @@ public class LoginServiceImpl implements LoginService {
         if (user != null) {
             throw new UsernameExistsException(ErrorMessage.USER_NAME_ALREADY_EXISTS);
         }
-        String password = DigestUtils.md5DigestAsHex(registerDTO.getPassword().getBytes());
+        String salt = UUID.randomUUID().toString().replaceAll("-", "");
+        registerDTO.setSalt(salt);
+        String password = DigestUtils.md5DigestAsHex((registerDTO.getPassword() + salt).getBytes());
+        System.out.println(password);
         registerDTO.setPassword(password);
         return userMapper.insert(registerDTO);
     }
@@ -35,10 +40,9 @@ public class LoginServiceImpl implements LoginService {
     public void login(LoginDTO loginDTO) {
         User user = userMapper.getByUsername(loginDTO.getUsername());
         if(user == null) {
-
             throw new UsernameErrorException(ErrorMessage.USER_NOT_REGISTERED);
         }
-        String password = DigestUtils.md5DigestAsHex(loginDTO.getPassword().getBytes());
+        String password = DigestUtils.md5DigestAsHex((loginDTO.getPassword()+user.getSalt()).getBytes());
         if (!password.equals(user.getPassword())) {
             throw new PasswordErrorException(ErrorMessage.WRONG_PASSWORD);
         }

@@ -8,6 +8,8 @@ import lombok.Data;
 public class RegisterDTO {
     private String username;
     private String password;
+    @JsonIgnore
+    private String salt;
     private Integer departmentId;
     private String role;
 

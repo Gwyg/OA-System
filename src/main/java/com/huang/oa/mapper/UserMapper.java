@@ -14,8 +14,8 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Insert("insert into users (username,password,department_id,role,status)  " +
-            "values (#{username},#{password},#{departmentId},#{role})")
+    @Insert("insert into users (username,password,department_id,role,salt)  " +
+            "values (#{username},#{password},#{departmentId},#{role},#{salt})")
     Integer insert(RegisterDTO registerDTO);
 
     @Select("select * from users where username = #{username}")

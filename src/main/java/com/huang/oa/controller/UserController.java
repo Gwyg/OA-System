@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -114,6 +115,18 @@ public class UserController {
         log.info("修改驳回的请求：{}",alterDTO);
         userService.alterLeave(alterDTO);
         return SaResult.ok();
+    }
+
+    /**
+     * 用户头像上传
+     * @param file
+     * @return
+     */
+    @PostMapping("/upload")
+    @Operation(summary = "用户头像上传")
+    public SaResult upload(@RequestParam("file") MultipartFile file){
+        String path = userService.upload(file);
+        return SaResult.data(path);
     }
 
 }

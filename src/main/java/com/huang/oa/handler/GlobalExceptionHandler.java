@@ -46,4 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotModifiedException.class)
     public SaResult notModifiedException(NotModifiedException e) {return SaResult.error(e.getMessage());}
+
+    @ExceptionHandler(PhotoUploadFailedException.class)
+    public SaResult photoUploadFailedException(PhotoUploadFailedException e) {return SaResult.error(e.getMessage());}
 }

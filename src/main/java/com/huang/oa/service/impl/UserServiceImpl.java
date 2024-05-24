@@ -5,6 +5,7 @@ import com.huang.oa.common.*;
 import com.huang.oa.exception.AlreadyExistException;
 import com.huang.oa.exception.LackOfAuthorityException;
 import com.huang.oa.exception.NotModifiedException;
+import com.huang.oa.exception.PhotoUploadFailedException;
 import com.huang.oa.mapper.*;
 import com.huang.oa.pojo.dto.AlterRequestDTO;
 import com.huang.oa.pojo.dto.CheckDTO;
@@ -17,11 +18,16 @@ import com.huang.oa.pojo.entity.WorkContent;
 import com.huang.oa.pojo.vo.UserQueryVO;
 import com.huang.oa.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -169,6 +175,20 @@ public class UserServiceImpl implements UserService {
         }
         request.setStatus(Status.PENDING);
         leaveRecordMapper.updateReasonById(request.getRequestId(),request.getReason(),request.getStatus());
+    }
+
+    @Override
+    public String upload(MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        String fileExtension = fileName.substring(fileName.lastIndexOf("."));
+        String newFileName = UUID.randomUUID().toString().replace("-","") + fileExtension;
+        try {
+            file.transferTo(new File("E:\\workspace\\OA\\src\\main\\resources\\static\\"+newFileName));
+        } catch (IOException e) {
+            throw new PhotoUploadFailedException("头像上传失败");
+        }
+        String path = "http://localhost:8080/static/"+newFileName;
+        return path;
     }
 
 }

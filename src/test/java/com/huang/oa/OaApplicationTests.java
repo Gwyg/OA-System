@@ -7,7 +7,11 @@ import com.huang.oa.pojo.dto.RegisterDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 
+import java.io.FileNotFoundException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +30,9 @@ class OaApplicationTests {
     @Autowired
     private WorkMemberMapper workMemberMapper;
 
+    public static void main(String[] args) {
+
+    }
 
 
 }

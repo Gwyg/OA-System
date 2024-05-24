@@ -6,6 +6,7 @@ spring:
     username: root
     password: yh351248
     driver-class-name: com.mysql.cj.jdbc.Driver
+
 server:
   # 端口
   port: 8080
@@ -57,5 +58,4 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
-
 

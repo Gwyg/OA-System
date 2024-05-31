@@ -17,4 +17,5 @@ public class ErrorMessage {
     public static final String WORK_ALREADY_EXISTS = "工作内容已存在";
     public static final String ALREADY_OVER = "工作已经结束，无法更改进度";
     public static final String FAILED_MAKE_AN_ANNOUNCEMENT = "发布公告失败";
+    public static final String ALREADY_CHECK = "已审核";
 }

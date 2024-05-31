@@ -37,4 +37,7 @@ public interface UserMapper {
 
     @Select("select department_id from users where user_id = #{userId}")
     int getDepartmentIdById(int userId);
+
+    @Update("update users set photo = #{path} where user_id = #{id}")
+    void updatePhotoById(int id, String path);
 }

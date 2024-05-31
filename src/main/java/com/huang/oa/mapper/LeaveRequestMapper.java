@@ -21,4 +21,7 @@ public interface LeaveRequestMapper {
 
     @Delete("delete from leave_requests where request_id = #{requestId}")
     void delete(Integer requestId);
+
+    @Update("update leave_requests set reason = #{reason},status = #{status} where request_id = #{requestId}")
+    void updateReasonById(Integer requestId, String reason, String status);
 }

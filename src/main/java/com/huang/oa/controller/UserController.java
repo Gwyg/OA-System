@@ -10,7 +10,10 @@ import com.huang.oa.pojo.dto.AlterRequestDTO;
 import com.huang.oa.pojo.dto.CheckDTO;
 import com.huang.oa.pojo.dto.DepartmentRequestDTO;
 import com.huang.oa.pojo.dto.LeaveRequestDTO;
+import com.huang.oa.pojo.entity.Record;
 import com.huang.oa.pojo.entity.WorkContent;
+import com.huang.oa.pojo.vo.PageResultVO;
+import com.huang.oa.pojo.vo.RecordVO;
 import com.huang.oa.pojo.vo.UserQueryVO;
 import com.huang.oa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -125,8 +128,18 @@ public class UserController {
     @PostMapping("/upload")
     @Operation(summary = "用户头像上传")
     public SaResult upload(@RequestParam("file") MultipartFile file){
+        log.info("用户头像上传");
         String path = userService.upload(file);
         return SaResult.data(path);
+    }
+
+    @GetMapping("/record")
+    @Operation(summary = "查询操作记录")
+    @SaCheckRole(Role.SUPER_AdMIN)
+    public SaResult record(Integer page,Integer pageSize){
+        log.info("查询操作记录");
+        PageResultVO list = userService.record(page,pageSize);
+        return SaResult.data(list);
     }
 
 }

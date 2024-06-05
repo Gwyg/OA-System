@@ -1,6 +1,7 @@
 package com.huang.oa.service.impl;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.huang.oa.common.*;
@@ -24,13 +25,16 @@ import org.springframework.boot.system.ApplicationHome;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,6 +56,8 @@ public class UserServiceImpl implements UserService {
     private LeaveRequestMapper leaveRequestMapper;
     @Autowired
     private RecordMapper recordMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public UserQueryVO query(int userId) {
@@ -149,6 +155,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void leaveRequest(LeaveRequestDTO requestDTO) {
         LeaveRequest request = leaveRequestMapper.getByUserId(StpUtil.getLoginIdAsInt());
         if(request != null){
@@ -157,6 +164,7 @@ public class UserServiceImpl implements UserService {
         requestDTO.setStatus(Status.PENDING);
         requestDTO.setUserId(StpUtil.getLoginIdAsInt());
         leaveRequestMapper.insertAll(requestDTO);
+        redisTemplate.delete("leaveList");
     }
 
     @Override
@@ -176,14 +184,17 @@ public class UserServiceImpl implements UserService {
             Record record = new Record(RecordType.LEAVE, request.getUserId(), Decision.AGREE,LocalDateTime.now());
             recordMapper.insetAll(record);
             leaveRequestMapper.delete(checkDTO.getRequestId());
+            redisTemplate.delete("leaveList");
         }else if(Decision.REJECT.equals(checkDTO.getDecision())) {
             Record record = new Record(RecordType.LEAVE, request.getUserId(), Decision.REJECT,LocalDateTime.now());
             recordMapper.insetAll(record);
             leaveRequestMapper.delete(checkDTO.getRequestId());
+            redisTemplate.delete("leaveList");
         }else if(Decision.SENDBACK.equals(checkDTO.getDecision())) {
             Record record = new Record(RecordType.LEAVE,request.getUserId(),Decision.SENDBACK,LocalDateTime.now());
             recordMapper.insetAll(record);
             leaveRequestMapper.updateStatusById(request.getRequestId(),Status.DISMISSED);
+            redisTemplate.delete("leaveList");
         }
     }
 
@@ -198,6 +209,7 @@ public class UserServiceImpl implements UserService {
         }
         request.setStatus(Status.PENDING);
         leaveRequestMapper.updateReasonById(request.getRequestId(),request.getReason(),request.getStatus());
+        redisTemplate.delete("leaveList");
     }
 
     @Override
@@ -206,13 +218,12 @@ public class UserServiceImpl implements UserService {
         String fileExtension = fileName.substring(fileName.lastIndexOf("."));
         String newFileName = UUID.randomUUID().toString().replace("-","") + fileExtension;
         try {
-            ApplicationHome home = new ApplicationHome(getClass());
-            String filepath = home.getDir().getParentFile().getParentFile().getAbsolutePath()+"/src/main/resources/static/images/"+newFileName;
-            file.transferTo(new File(filepath));
+            File filepath = new File("/tmp/img/"+newFileName);
+            file.transferTo(filepath);
         } catch (IOException e) {
             throw new PhotoUploadFailedException("头像上传失败");
         }
-        String path = "http://localhost:8080/images/"+newFileName;
+        String path = "http://121.43.50.203:8080/img/"+newFileName;
         userMapper.updatePhotoById(StpUtil.getLoginIdAsInt(),path);
         return path;
     }
@@ -224,6 +235,20 @@ public class UserServiceImpl implements UserService {
         PageInfo<RecordVO> page1 = new PageInfo<>(list);
         Long total = page1.getTotal();
         return new PageResultVO(total,list);
+    }
+
+    @Override
+    public List<LeaveRequest> leaveList() {
+        List<LeaveRequest> list = new ArrayList<>();
+        if (redisTemplate.hasKey("leaveList")){
+            String value = redisTemplate.opsForValue().get("leaveList").toString();
+            list = JSON.parseObject(value,List.class);
+            return list;
+        }
+        list = leaveRequestMapper.getAll();
+        String value = JSON.toJSONString(list);
+        redisTemplate.opsForValue().set("leaveList",value);
+        return list;
     }
 
 }

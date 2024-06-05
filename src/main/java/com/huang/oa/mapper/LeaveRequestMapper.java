@@ -4,6 +4,8 @@ import com.huang.oa.pojo.dto.LeaveRequestDTO;
 import com.huang.oa.pojo.entity.LeaveRequest;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface LeaveRequestMapper {
     @Select("select * from leave_requests where user_id = #{userId}")
@@ -24,4 +26,7 @@ public interface LeaveRequestMapper {
 
     @Update("update leave_requests set reason = #{reason},status = #{status} where request_id = #{requestId}")
     void updateReasonById(Integer requestId, String reason, String status);
+
+    @Select("select * from leave_requests")
+    List<LeaveRequest> getAll();
 }

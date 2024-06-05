@@ -4,6 +4,7 @@ import com.huang.oa.pojo.dto.AlterRequestDTO;
 import com.huang.oa.pojo.dto.CheckDTO;
 import com.huang.oa.pojo.dto.DepartmentRequestDTO;
 import com.huang.oa.pojo.dto.LeaveRequestDTO;
+import com.huang.oa.pojo.entity.LeaveRequest;
 import com.huang.oa.pojo.entity.WorkContent;
 import com.huang.oa.pojo.vo.PageResultVO;
 import com.huang.oa.pojo.vo.RecordVO;
@@ -32,4 +33,6 @@ public interface UserService {
     String upload(MultipartFile file);
 
     PageResultVO record(Integer page, Integer pageSize);
+
+    List<LeaveRequest> leaveList();
 }

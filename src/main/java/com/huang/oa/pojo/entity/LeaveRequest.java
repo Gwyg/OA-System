@@ -10,6 +10,6 @@ public class LeaveRequest {
     private Integer userId;
     private String reason;
     private String status;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 }

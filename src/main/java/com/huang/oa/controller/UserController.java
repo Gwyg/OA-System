@@ -10,6 +10,7 @@ import com.huang.oa.pojo.dto.AlterRequestDTO;
 import com.huang.oa.pojo.dto.CheckDTO;
 import com.huang.oa.pojo.dto.DepartmentRequestDTO;
 import com.huang.oa.pojo.dto.LeaveRequestDTO;
+import com.huang.oa.pojo.entity.LeaveRequest;
 import com.huang.oa.pojo.entity.Record;
 import com.huang.oa.pojo.entity.WorkContent;
 import com.huang.oa.pojo.vo.PageResultVO;
@@ -139,6 +140,19 @@ public class UserController {
     public SaResult record(Integer page,Integer pageSize){
         log.info("查询操作记录");
         PageResultVO list = userService.record(page,pageSize);
+        return SaResult.data(list);
+    }
+
+    /**
+     * 查询请假列表
+     * @return
+     */
+    @Operation(summary = "请假列表")
+    @SaCheckRole(value = {Role.DEPARTMENT_ADMIN,Role.SUPER_AdMIN},mode = SaMode.OR)
+    @GetMapping("/leaveList")
+    public SaResult leaveList(){
+        log.info("查询请假列表");
+        List<LeaveRequest> list = userService.leaveList();
         return SaResult.data(list);
     }
 
